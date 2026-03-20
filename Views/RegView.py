@@ -34,22 +34,27 @@ class RegView(Toplevel):
         """
         try:
             # Пытаемся получить роли через справочник
-            self._roles = list(ReferenceController.get_roles())
-            # Если ролей нет (пустая таблица), создаём стандартные и пробуем ещё раз
-            if not self._roles:
+            roles = list(ReferenceController.get_roles())
+            if not roles:
+                # Если таблица пуста, пробуем заполнить через seed
                 from Models.create_table import seed_roles
-
                 seed_roles()
-                self._roles = list(ReferenceController.get_roles())
+                roles = list(ReferenceController.get_roles())
+
+            self._roles = roles
             self._role_map = {role.name: int(role.id) for role in self._roles}
-        except Exception:  # noqa: BLE001
+
+            # Если после всех попыток ролей нет, показываем ошибку
+            if not self._role_map:
+                messagebox.showerror("Ошибка", "Не удалось загрузить список ролей. Проверьте базу данных.")
+        except Exception as e:
+            messagebox.showerror("Ошибка", f"Ошибка загрузки ролей: {e}")
             self._roles = []
             self._role_map = {}
 
     def _build_ui(self) -> None:
         padding = {"padx": 20, "pady": 5}
 
-        # Внутренний фрейм, центрируемый по окну
         container = ttk.Frame(self)
         container.pack(expand=True)
 
@@ -99,7 +104,6 @@ class RegView(Toplevel):
         password2 = self.password2_var.get().strip()
         role_name = self.role_var.get().strip()
 
-        # Имя может быть пустым, остальные поля обязательны
         if not all([login, password, password2, role_name]):
             messagebox.showwarning("Регистрация", "Заполните логин, пароль и роль")
             return
@@ -132,7 +136,6 @@ class RegView(Toplevel):
 
 
 if __name__ == "__main__":
-    # Для отдельного запуска окна регистрации
     from tkinter import Tk
 
     root = Tk()
