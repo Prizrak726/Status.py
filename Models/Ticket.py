@@ -1,6 +1,5 @@
-
 from datetime import datetime
-
+from peewee import *
 from Models.Base import *
 from Models.Category import Category
 from Models.Status import Status
@@ -17,6 +16,7 @@ class Ticket(BaseModel):
     user_id = ForeignKeyField(model=Users)
     executor_id = ForeignKeyField(model=Users, null=True)
     category_id = ForeignKeyField(model=Category)
+    attachment_path = CharField(null=True)
 
     def save(self, *args, **kwargs):
         self.updated_at = datetime.now()

@@ -1,4 +1,5 @@
 from Models.Base import *
+from peewee import *
 
 class Type(BaseModel):
     PUBLIC = 1      # Видно всем (пользователь, тех, админ)

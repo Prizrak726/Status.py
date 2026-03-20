@@ -1,4 +1,5 @@
 from Models.Base import *
+from peewee import *
 
 class Status(BaseModel):
     # Фиксированные статусы заявки

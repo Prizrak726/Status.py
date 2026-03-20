@@ -1,3 +1,4 @@
+from peewee import *
 from Models.Base import *
 from Models.Ticket import Ticket
 from Models.Users import Users

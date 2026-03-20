@@ -1,11 +1,10 @@
-from Models.Base import *
-
+from peewee import *
+from Models.Base import BaseModel
 
 class Role(BaseModel):
-    # Фиксированные идентификаторы ролей
-    USER = 1          # Пользователь
-    SPECIALIST = 2    # Специалист
-    ADMIN = 3         # Администратор
+    USER = 1
+    SPECIALIST = 2
+    ADMIN = 3
 
     id = PrimaryKeyField(primary_key=True)
     name = CharField(unique=True)

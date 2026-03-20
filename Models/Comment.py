@@ -1,3 +1,4 @@
+from peewee import *
 from Models.Base import *
 from Models.Users import Users
 from Models.Type import Type

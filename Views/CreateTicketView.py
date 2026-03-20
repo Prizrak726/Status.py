@@ -7,10 +7,6 @@ from Models.Users import Users
 
 
 class CreateTicketView(Toplevel):
-    """
-    Окно «Создание заявки» с возможностью прикрепления файла.
-    """
-
     def __init__(self, master, current_user: Users, on_created=None) -> None:
         super().__init__(master)
         self.title("Создание заявки")
@@ -34,7 +30,10 @@ class CreateTicketView(Toplevel):
         try:
             self._categories = list(ReferenceController.get_categories())
             self._category_map = {cat.title: int(cat.id) for cat in self._categories}
-        except Exception:
+            print("Categories loaded:", self._category_map)  # отладка
+        except Exception as e:
+            print("Error loading categories:", e)
+            messagebox.showerror("Ошибка", f"Не удалось загрузить категории: {e}")
             self._categories = []
             self._category_map = {}
 
@@ -73,7 +72,6 @@ class CreateTicketView(Toplevel):
         self.description_text = Text(self, height=8, width=50)
         self.description_text.grid(row=3, column=0, columnspan=3, sticky="nsew", **padding)
 
-        # Кнопка прикрепления файла
         btn_file = ttk.Button(self, text="Прикрепить файл", command=self.choose_file)
         btn_file.grid(row=4, column=0, sticky="w", padx=10, pady=5)
         self.lbl_file = ttk.Label(self, text="Файл не выбран")
@@ -94,6 +92,8 @@ class CreateTicketView(Toplevel):
             self.lbl_file.config(text=os.path.basename(filename))
 
     def on_create(self) -> None:
+        print("on_create called")  # отладка
+
         title = self.title_var.get().strip()
         description = self.description_text.get("1.0", END).strip()
         category_title = self.category_var.get().strip()
@@ -108,13 +108,14 @@ class CreateTicketView(Toplevel):
             messagebox.showerror("Создание заявки", "Категория не выбрана или не найдена")
             return
 
-        # Встраиваем срочность в заголовок и описание
         if urgency:
             full_title = f"[{urgency}] {title}"
             full_description = f"Срочность: {urgency}\n\n{description}"
         else:
             full_title = title
             full_description = description
+
+        print("Calling TicketController.create_ticket with:", full_title, category_id, self.current_user.id, self.attachment_path)
 
         ok, result = TicketController.create_ticket(
             title=full_title,
@@ -123,6 +124,9 @@ class CreateTicketView(Toplevel):
             user_id=self.current_user.id,
             attachment_path=self.attachment_path,
         )
+
+        print("Create ticket result:", ok, result)
+
         if not ok:
             messagebox.showerror("Создание заявки", str(result))
             return

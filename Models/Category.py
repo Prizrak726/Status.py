@@ -1,3 +1,4 @@
+from peewee import *
 from Models.Base import *
 
 

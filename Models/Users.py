@@ -1,5 +1,6 @@
 from  Models.Base import *
 from Models.Role import Role
+from peewee import *
 
 
 class Users(BaseModel):

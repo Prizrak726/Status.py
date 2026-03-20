@@ -1,4 +1,5 @@
-from Connect.connect import *
+from peewee import Model
+from Connect.connect import connect
 
 class BaseModel(Model):
     class Meta:

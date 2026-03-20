@@ -78,14 +78,9 @@ class TicketController:
             description: str,
             category_id: int,
             user_id: int,
-            executor_id: Optional[int] = None,  # оставляем необязательным
+            executor_id: Optional[int] = None,
+            attachment_path: Optional[str] = None,  # новый параметр
     ) -> tuple[bool, str | Ticket]:
-        """
-        Создать новую заявку.
-
-        Если executor_id не указан, по умолчанию исполнителем становится автор заявки.
-        """
-        # Проверяем существование связанных объектов (минимально)
         try:
             Category.get_by_id(category_id)
         except DoesNotExist:
@@ -96,9 +91,7 @@ class TicketController:
         except DoesNotExist:
             return False, "Пользователь (автор заявки) не найден"
 
-        if executor_id is None:
-            executor_id = user.id
-        else:
+        if executor_id is not None:
             try:
                 Users.get_by_id(executor_id)
             except DoesNotExist:
@@ -112,9 +105,10 @@ class TicketController:
                 user_id=user.id,
                 executor_id=executor_id,
                 category_id=category_id,
+                attachment_path=attachment_path,  # сохраняем путь к файлу
             )
             return True, ticket
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return False, f"Ошибка создания заявки: {exc}"
 
     @classmethod
