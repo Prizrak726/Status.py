@@ -186,10 +186,9 @@ class TicketController:
     @classmethod
     def finish_ticket(cls, ticket_id: int) -> tuple[bool, str]:
         """
-        Завершить заявку (перевести в статус «Завершено»).
-        Используем только существующие статусы модели: NEW / IN_PROGRESS / DONE.
+        Завершить заявку (перевести в статус «Решена»).
         """
-        return cls.set_status(ticket_id, Status.DONE)
+        return cls.set_status(ticket_id, Status.RESOLVED)
 
     @classmethod
     def delete_ticket(cls, ticket_id: int) -> tuple[bool, str]:
